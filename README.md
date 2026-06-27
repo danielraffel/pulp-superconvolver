@@ -22,13 +22,16 @@ If it still won't load, run **SuperConvolver Diagnostics** (below) and send back
 
 ## Download
 
-Grab the latest [release](../../releases/latest):
+Grab the latest [release](../../releases/latest) — a single installer:
 
-- **`SuperConvolver-1.0.1.dmg`** — the standalone app. Drag to Applications and double-click. No DAW needed.
-- **`SuperConvolver-1.0.1.pkg`** — the plugin installer for **AU**, **VST3**, and **CLAP** (the installer's *Customize* pane lets you pick which). AU → Logic/GarageBand · VST3 → most DAWs · CLAP → REAPER/Bitwig.
-- **`SuperConvolver-Diagnostics-1.0.1.dmg`** — a tiny "double-click and send me the result" helper. If a plugin won't load, run it: it writes a `SuperConvolver-Diagnostics-<timestamp>.zip` to your **Desktop** (system info, per-format install/sign/quarantine status, **executable architecture**, and an `auval` run). Send that zip back.
+- **`SuperConvolver-1.0.2.pkg`** — one notarized installer. Its **Customize** pane lets you pick any of:
+  - **Audio Unit (AU)** → Logic Pro, GarageBand
+  - **VST3** → most DAWs
+  - **CLAP** → REAPER, Bitwig
+  - **Standalone app** → `SuperConvolver.app` in Applications (no DAW needed)
+  - **Diagnostics helper** → if a plugin won't load, run it; it writes a report **.zip to your Desktop** (system info, per-format install/sign/quarantine status, **executable architecture**, `auval`). Send that zip back.
 
-All assets are signed with a Developer ID and notarized by Apple, so they open without Gatekeeper warnings.
+Signed with a Developer ID and notarized by Apple, so it opens without Gatekeeper warnings.
 
 ## What it is
 
