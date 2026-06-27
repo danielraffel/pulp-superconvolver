@@ -4,6 +4,8 @@ A convolution reverb with a GPU-rendered UI, built on [Pulp](https://github.com/
 
 > Temporary distribution repo for sharing preview builds. The source lives in the Pulp repo (`examples/super-convolver`).
 
+![SuperConvolver editor — live impulse-response waveform, output spectrum, and Mix / Size / Gain + Bypass](screenshot.png)
+
 ## Download
 
 Grab the latest [release](../../releases/latest):
