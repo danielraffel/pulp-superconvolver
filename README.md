@@ -24,7 +24,7 @@ If it still won't load, run **SuperConvolver Diagnostics** (below) and send back
 
 Grab the latest [release](../../releases/latest) — a single installer:
 
-- **`SuperConvolver-1.0.2.pkg`** — one notarized installer. Its **Customize** pane lets you pick any of:
+- **`SuperConvolver-1.0.3.pkg`** — one notarized installer. Its **Customize** pane lets you pick any of:
   - **Audio Unit (AU)** → Logic Pro, GarageBand
   - **VST3** → most DAWs
   - **CLAP** → REAPER, Bitwig
