@@ -6,24 +6,39 @@ A convolution reverb with a GPU-rendered UI, built on [Pulp](https://github.com/
 
 ![SuperConvolver editor — live impulse-response waveform, output spectrum, and Mix / Size / Gain + Bypass](screenshot.png)
 
+Running as a CLAP plugin in REAPER:
+
+![SuperConvolver loaded in REAPER](reaper.png)
+
+## ⚠️ Apple Silicon native — run your host natively (not Rosetta)
+
+These builds are **arm64 (Apple Silicon) only**. A host running under **Rosetta (x86_64)** cannot load an arm64-only plugin — it shows up as *"couldn't be opened"* / not found. If a plugin won't load:
+
+1. Quit your DAW.
+2. In **Applications**, right-click the DAW → **Get Info** → **uncheck "Open using Rosetta"**.
+3. Relaunch. (Ableton Live 11.3+, Logic, REAPER, Bitwig all run natively on Apple Silicon.)
+
+If it still won't load, run **SuperConvolver Diagnostics** (below) and send back the report.
+
 ## Download
 
 Grab the latest [release](../../releases/latest):
 
-- **`SuperConvolver-1.0.0.dmg`** — the standalone app. Drag to Applications and double-click. No DAW needed.
-- **`SuperConvolver-1.0.0.pkg`** — the plugin installer. Installs the **AU**, **VST3**, and **CLAP** formats (the installer's *Customize* pane lets you pick which). For Logic/GarageBand (AU), most DAWs (VST3), REAPER/Bitwig (CLAP).
+- **`SuperConvolver-1.0.1.dmg`** — the standalone app. Drag to Applications and double-click. No DAW needed.
+- **`SuperConvolver-1.0.1.pkg`** — the plugin installer for **AU**, **VST3**, and **CLAP** (the installer's *Customize* pane lets you pick which). AU → Logic/GarageBand · VST3 → most DAWs · CLAP → REAPER/Bitwig.
+- **`SuperConvolver-Diagnostics-1.0.1.dmg`** — a tiny "double-click and send me the result" helper. If a plugin won't load, run it: it writes a `SuperConvolver-Diagnostics-<timestamp>.zip` to your **Desktop** (system info, per-format install/sign/quarantine status, **executable architecture**, and an `auval` run). Send that zip back.
 
-Both are signed with a Developer ID and notarized by Apple, so they open without Gatekeeper warnings.
+All assets are signed with a Developer ID and notarized by Apple, so they open without Gatekeeper warnings.
 
 ## What it is
 
-- **Convolution reverb** — your signal convolved with a decaying impulse response. The **Size** knob morphs the IR live (rebuilt off the audio thread, swapped in lock-free).
-- **GPU-rendered UI** — a live impulse-response waveform tinted by the output spectrum, a log-frequency spectrum display, and Mix / Size / Gain + Bypass, all drawn through Pulp's Skia/Dawn GPU surface.
+- **Convolution reverb** — your signal convolved with a decaying impulse response. The **Size** knob morphs the IR live (rebuilt off the audio thread, swapped in lock-free). Correct under any host block size (internal re-blocking; ~5.3 ms reported latency for host PDC).
+- **GPU-rendered UI** — a live impulse-response waveform tinted by the output spectrum, a log-frequency spectrum display, and Mix / Size / Gain + Bypass, drawn through Pulp's Skia/Dawn GPU surface and themed with Pulp's *Ink & Signal* design language.
 - **Mix** dry/wet, **Size** reverb length (0.05–4 s), **Gain** output trim, **Bypass**.
 
 ## Requirements
 
-macOS on Apple Silicon (arm64).
+macOS on Apple Silicon (arm64). Run your DAW natively (not under Rosetta).
 
 ## Feedback
 
