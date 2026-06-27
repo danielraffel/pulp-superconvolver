@@ -10,6 +10,18 @@ Running as a CLAP plugin in REAPER:
 
 ![SuperConvolver loaded in REAPER](reaper.png)
 
+
+## Real GPU audio (not GPU-for-show)
+
+SuperConvolver's audio is **CPU by default**. Switch **Engine → GPU** and raise **Rooms** and it convolves your signal against many distinct impulse responses (rooms), each panned to its own position, **in one batched GPU submit per block**. This is a regime the GPU genuinely wins:
+
+| IR | Rooms | CPU/block | GPU/block | result |
+|----|------:|----------:|----------:|--------|
+| 0.5 s | 256 | 20,617 µs (**over** the 10,666 µs real-time budget) | 3,426 µs | **6.0× — CPU can't keep up, GPU stays smooth** |
+| 1.0 s | 128 | 15,947 µs (**over** budget) | 3,589 µs | 4.4× |
+
+Single-IR convolution stays on the CPU (the CPU↔GPU round-trip wins there) — so the GPU is used only where it's actually faster. The editor shows the live engine: *Audio: GPU · Metal · N rooms · blocks · misses*. Measured on Apple Silicon / Metal.
+
 ## ⚠️ Apple Silicon native — run your host natively (not Rosetta)
 
 These builds are **arm64 (Apple Silicon) only**. A host running under **Rosetta (x86_64)** cannot load an arm64-only plugin — it shows up as *"couldn't be opened"* / not found. If a plugin won't load:
@@ -24,7 +36,7 @@ If it still won't load, run **SuperConvolver Diagnostics** (below) and send back
 
 Grab the latest [release](../../releases/latest) — a single installer:
 
-- **`SuperConvolver-1.0.3.pkg`** — one notarized installer. Its **Customize** pane lets you pick any of:
+- **`SuperConvolver-1.0.4.pkg`** — one notarized installer. Its **Customize** pane lets you pick any of:
   - **Audio Unit (AU)** → Logic Pro, GarageBand
   - **VST3** → most DAWs
   - **CLAP** → REAPER, Bitwig
