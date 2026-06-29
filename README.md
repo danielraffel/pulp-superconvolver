@@ -17,7 +17,9 @@ SuperConvolver's audio runs on the **CPU by default**. There's an opt-in **GPU e
 
 The catch is the round-trip: moving a block of audio to the GPU, running a kernel, and reading the result back costs hundreds of microseconds of fixed overhead per block. For ordinary DSP — a single reverb, an EQ, a compressor — that overhead is *larger than just doing the work on the CPU*, so the CPU wins, full stop. The GPU only pulls ahead when there's enough **parallel** work in one block to amortize that round-trip: many FFTs, many filters, big matrix multiplies.
 
-So SuperConvolver puts the GPU on the one job that fits: **many rooms at once**. Switch **Engine → GPU** and raise **Rooms**, and it convolves your signal against many distinct impulse responses — each panned to its own stereo position — **in one batched GPU submit per block**. This is irreducible work (the rooms can't be collapsed into one summed IR because each is panned differently), and it's exactly the regime where the GPU earns its keep.
+So SuperConvolver puts the GPU on a job with lots of parallel work: **many rooms at once**. Switch **Engine → GPU** and raise **Rooms**, and it convolves your signal against many impulse responses — each panned to its own stereo position — **in one batched GPU submit per block**.
+
+> **Honest caveat — a correction in progress.** With a *fixed* pan per room, this batch is mathematically **reducible**: every room convolves the same input and is summed with constant weights, so the whole bank collapses to just **two** convolutions — one combined IR per stereo channel (`A·x + B·x = (A+B)·x`). A correct CPU implementation folds the work that way and wins, so the many-room numbers below measure **raw N-way parallel-convolution throughput, not a musical result that requires the GPU**. The genuinely-irreducible version — rooms whose pan and character *vary over time*, so they can't be pre-summed — is in progress, and the GPU-win claim will rest on that. We'd rather say this plainly than overclaim. *(Thanks to a sharp-eyed listener for the nudge.)*
 
 ### Reading the numbers
 
@@ -31,9 +33,9 @@ A quick glossary, because the units matter:
 
 So when a row below says "17,448 µs (over budget)," it means the CPU needed 17,448 µs to process a block that has to finish in 10,666 µs — it can't, and the audio breaks up. "3,402 µs" on the GPU means the same block finished comfortably inside the budget.
 
-### Where the GPU wins (many panned rooms)
+### Many panned rooms — raw parallel throughput (see the caveat above)
 
-Measured on Apple Silicon / Metal, block 512 @ 48 kHz. Real-time budget = 10,666 µs/block. **Lower µs/block is better.**
+Measured on Apple Silicon / Metal, block 512 @ 48 kHz. Real-time budget = 10,666 µs/block. **Lower µs/block is better.** These compare a naive N-way batch on each engine — for a *static* pan that batch folds to two convolutions, so read them as parallel-FFT throughput, not as proof the sound needs the GPU.
 
 | IR | Rooms | CPU µs/block | GPU µs/block | speedup |
 |----|------:|-------------:|-------------:|---------|
@@ -42,7 +44,7 @@ Measured on Apple Silicon / Metal, block 512 @ 48 kHz. Real-time budget = 10,666
 | 0.50 s | 256 | 17,448 (**over** the real-time budget) | 3,402 | **5.1× — the CPU can't keep up; the GPU stays smooth** |
 | 1.00 s | 128 | 15,490 (**over** budget) | 3,660 | **4.2×** |
 
-At 0.5 s / 256 rooms and 1.0 s / 128 rooms the CPU simply can't finish a block in time — it overruns the real-time budget and the audio breaks up. The GPU does the same work in a third of the budget. That's the point: not "a bit faster," but **possible at all** in real time.
+These rows show the GPU completing a 256- or 128-way *batched* convolution inside the real-time budget while a naive CPU loop over the same N convolutions can't. But per the caveat above, a static pan makes that N-way batch reducible to two convolutions — so this measures parallel-FFT throughput, not a result that requires the GPU. The honest GPU win is the time-varying version, which is in progress.
 
 ### Where the GPU does *not* help (and we won't pretend otherwise)
 
